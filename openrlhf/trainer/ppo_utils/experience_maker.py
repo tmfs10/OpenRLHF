@@ -588,13 +588,13 @@ class RemoteExperienceMaker(NaiveExperienceMaker):
         )
 
         # init log probs
-        if (self.initial_model is not None) and (not evaluation):
+        if (self.initial_model is not None):
             base_action_log_probs_ref = self.initial_model.forward.remote(
                 sequences_cpu, num_actions, attention_mask_cpu, packed_seq_lens=packed_seq_lens
             ) if self.initial_model is not None else None
 
         # values
-        if (self.critic is not None) and (not evaluation):
+        if (self.critic is not None):
             value_ref = self.critic.forward.remote(
                 sequences_cpu, num_actions, attention_mask_cpu, packed_seq_lens=packed_seq_lens
             )
@@ -605,7 +605,7 @@ class RemoteExperienceMaker(NaiveExperienceMaker):
         else:
             value_ref = ray.put(None)
 
-        if self.strategy.args.colocate_actor_ref and (self.initial_model is not None) and (not evaluation):
+        if self.strategy.args.colocate_actor_ref and (self.initial_model is not None):
             ray.get([base_action_log_probs_ref])
             ray.get([self.initial_model.empty_cache.remote()])
 
@@ -677,7 +677,7 @@ class RemoteExperienceMaker(NaiveExperienceMaker):
         if self.strategy.args.colocate_actor_ref:
             torch.cuda.empty_cache()
 
-        if (self.initial_model is not None) and (not evaluation):
+        if (self.initial_model is not None):
             kl = compute_approx_kl(
                 action_log_probs,
                 base_action_log_probs,
