@@ -638,12 +638,9 @@ class RemoteExperienceMaker(NaiveExperienceMaker):
 
         # log probs
         action_log_probs_start_time = 0
-        if not evaluation:
-            action_log_probs_start_time = time.time()
-            action_log_probs = self.actor(sequences, num_actions, attention_mask, packed_seq_lens=packed_seq_lens)
-            action_log_probs_time = time.time() - action_log_probs_start_time
-        else:
-            action_log_probs = torch.zeros_like(sequences[:, :-1], dtype=self.actor.dtype, device=self.actor.device)
+        action_log_probs_start_time = time.time()
+        action_log_probs = self.actor(sequences, num_actions, attention_mask, packed_seq_lens=packed_seq_lens)
+        action_log_probs_time = time.time() - action_log_probs_start_time
         actor_value_rm_time = time.time() - start
 
         # wait initial/critic/reward model done

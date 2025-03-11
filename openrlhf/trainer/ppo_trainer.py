@@ -382,8 +382,9 @@ class PPOTrainer(ABC):
                     mask = s != -99999
                     s = s[mask]
                     status_mean[k] = s.mean().item() if s.numel() > 0 else float('nan')
-                elif k == 'time_actor_step':
-                    time_actor_total = status_mean[k]
+                else:
+                    if k == 'time_actor_step':
+                        time_actor_total = status_mean[k]
                     status_mean[k] /= len(status_list)
             status_mean['time_actor_total'] = time_actor_total
         for k, v in status_mean.items():
